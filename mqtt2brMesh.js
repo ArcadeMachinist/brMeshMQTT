@@ -273,22 +273,6 @@ class Light {
 	command[3] = (g * color_normalisation) & 0xff;
 	single_control(this.id, this.key, command, 0);
     }
-    Multi(on, brightness, r, g, b, i5, i6, abs) {
-        let command = new Array(6).fill(0);
-        let color_normalisation = 1;
-        command[0] = 0;
-        if (on) command[0]+=128;
-        command[0]+=(brightness & 127);
-        if (!abs) {
-                color_normalisation = 255.0 / (r + g + b) ;
-        }
-        command[1] = (b * color_normalisation) & 0xff;
-        command[2] = (r * color_normalisation) & 0xff;
-        command[3] = (g * color_normalisation) & 0xff;
-        command[4] = i5 & 0xff;
-        command[5] = i6 & 0xff;
-        single_control(this.id, this.key, command, 0);
-    }
 }
 
 
@@ -303,34 +287,38 @@ client.on("connect", () => {
 
 client.on("message", (topic, message,packet) => {
   if (topic.indexOf("/") > -1) {
-	let topic_talks =  topic.split("/");
-	console.log(topic_talks);
-	if (topic_talks[0] == "brMesh") {
-		let light = topic_talks[1];
-		if (topic_talks[2] == "set") {
+        let topic_talks =  topic.split("/");
+        console.log(topic_talks);
+        if (topic_talks[0] == "brMesh") {
+                let light = topic_talks[1];
+                if (topic_talks[2] == "set") {
                         let myLight = new Light(my_key, light);
-			let brightness = 0;
-			console.log(packet.payload.toString());
-			let payload = JSON.parse(packet.payload.toString());
-			console.log(payload);
-			if (typeof payload.brightness != "undefined") {
-			       myLight.Brightness(1,payload.brightness);
-			}
-			if (typeof payload.state != "undefined") {
-				if (payload.state == "ON") { // last state
-					myLight.setOnOff(1,brightness);
-				} else if (payload.state == "COLOR") {
-					if (typeof payload.color != "undefined") {
-                               			 myLight.Colored(1, brightness, payload.color.r, payload.color.g, payload.color.b, true);
-                        		}
-				} else if (payload.state == "WWHITE") {
-					myLight.WarmWhite(1,brightness,127,127);
-				} else {
-                                        myLight.setOnOff(0,0);
-				}
-		       }
-		}
-	} 
+                        let brightness = 0;
+                        console.log(packet.payload.toString());
+                        let payload = JSON.parse(packet.payload.toString());
+                        console.log(payload);
+                        if (typeof payload.brightness != "undefined") {
+                               // Map HA 3..255 brightness range to brMesh 1..127
+                               let nb =  (payload.brightness - 3) * (127 - 1) / (255 - 3) + 1;
+                               //console.log("nb: "+nb);
+                               myLight.Brightness(1,nb);
+                        } else if (typeof payload.color != "undefined") {
+                               myLight.Colored(1, brightness, payload.color.r, payload.color.g, payload.color.b, true);
+                        } else if (typeof payload.color_temp != "undefined") {
+                               if (payload.color_temp == 500) {
+                                myLight.WarmWhite(1,brightness,127,127);
+                               }
+                        } else {
+                                if (typeof payload.state != "undefined") {
+                                        if (payload.state == "ON") { // last state
+                                                myLight.setOnOff(1,brightness);
+                                        } else {
+                                                myLight.setOnOff(0,0);
+                                        }
+                                }
+                       }
+                }
+        }
   }
 });
 
