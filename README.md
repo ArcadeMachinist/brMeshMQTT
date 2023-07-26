@@ -3,7 +3,6 @@ This is a simple MQTT to brMesh (Broadlink Fastcon) gateway.
 It is not a real-world ready app, just a proof of concept.
 
 HomeAssistant video: https://youtu.be/gQ_EAsYz9jI
-MQTT video: https://www.youtube.com/watch?v=fJXuOzNATx8
 
 I have bought MELPO flood lights from Amazon and found they are based on some weird Broadlink mesh, with no direct control possible.
 Special thanks goes to Moody for his initial research, read his blog here:
