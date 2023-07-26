@@ -30,14 +30,20 @@ This "gateway" would connect to your MQTT server and subscribe to **brMesh** top
 Expected control messages are: brMesh/deviceId/set { json payload }
 
 Examples:
-```brMesh/2/set { "state": "OFF" } 
+```
+brMesh/2/set { "state": "OFF" } 
 brMesh/2/set { "state": "ON" } 
-brMesh/2/set { "state": "WWHITE" }
-brMesh/2/set { "state": "COLOR", "color": {"r": 255,"g": 0,"b": 25} }
-brMesh/2/set { "brightness": 40 }
+brMesh/2/set { "state": "ON", "color": {"r": 255,"g": 0,"b": 25} }
+brMesh/2/set { "state": "ON", "color_temp": 500 }
+brMesh/2/set { "state": "ON", "brightness": 40 }
+```
+
+To register light in HomeAssistant using MQTT, you can issue:
+
+```
+mosquittpub -h MQTT_SERVER_IP -t 'homeassistant/light/brMesh2/config' -m '{ "name":"brMesh2", "schema":"json", "command_topic":"brMesh/2/set", "rgb":"true", "brightness":"true", "optimistic":"true", "color_temp":"false","effect":"false",  "color_temp":"true"}'
 ```
 
 All the above examples assume your LED light has ID 2.
-While Moody's code suggest that lights should support setting brightness as a part of the ON/COLOR/WHITE commands, mine are refusing to do so and do honor brightness only when sent as a standalone command.
 
 For now we use shell invocation of **btmgmt** to set BLE advertising data and it really should be done in a nicer way, programmatically.
