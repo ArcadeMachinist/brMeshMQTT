@@ -40,4 +40,4 @@ brMesh/2/set { "brightness": 40 }
 All the above examples assume your LED light has ID 2.
 While Moody's code suggest that lights should support setting brightness as a part of the ON/COLOR/WHITE commands, mine are refusing to do so and do honor brightness only when sent as a standalone command.
 
-For now we use shell invokation of **btmgmt** to set BLE advertising data and it really should be done in a nicer way, programmatically.
+For now we use shell invocation of **btmgmt** to set BLE advertising data and it really should be done in a nicer way, programmatically.
