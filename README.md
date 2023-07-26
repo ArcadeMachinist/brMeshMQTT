@@ -2,7 +2,8 @@
 This is a simple MQTT to brMesh (Broadlink Fastcon) gateway.
 It is not a real-world ready app, just a proof of concept.
 
-Video here: https://www.youtube.com/watch?v=fJXuOzNATx8
+HomeAssistant video: https://youtu.be/gQ_EAsYz9jI
+MQTT video: https://www.youtube.com/watch?v=fJXuOzNATx8
 
 I have bought MELPO flood lights from Amazon and found they are based on some weird Broadlink mesh, with no direct control possible.
 Special thanks goes to Moody for his initial research, read his blog here:
@@ -45,5 +46,6 @@ mosquittpub -h MQTT_SERVER_IP -t 'homeassistant/light/brMesh2/config' -m '{ "nam
 ```
 
 All the above examples assume your LED light has ID 2.
+All "temperature" settings, but the most left "warm white" are ignored.
 
 For now we use shell invocation of **btmgmt** to set BLE advertising data and it really should be done in a nicer way, programmatically.
