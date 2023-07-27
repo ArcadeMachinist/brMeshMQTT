@@ -1,6 +1,6 @@
 # brMeshMQTT
 This is a simple MQTT to brMesh (Broadlink Fastcon) gateway.
-It is not a real-world ready app, just a proof of concept.
+It is not a real-world ready app, just a proof of concept. Supports LED lights only, all types.
 
 HomeAssistant video: https://youtu.be/gQ_EAsYz9jI
 
