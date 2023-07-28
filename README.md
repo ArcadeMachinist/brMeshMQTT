@@ -4,6 +4,10 @@ It is not a real-world ready app, just a proof of concept. Supports LED lights o
 
 HomeAssistant video: https://youtu.be/gQ_EAsYz9jI
 
+Compatible lights are those, that can be controlled by **brMesh** or **Broadlink BLE** mobile apps.
+
+Be warned - there is also **brLight** app, while it has the same design as **brMesh**, the protocol is different.
+
 I have bought MELPO flood lights from Amazon and found they are based on some weird Broadlink mesh, with no direct control possible.
 Special thanks goes to Moody for his initial research, read his blog here:
 https://mooody.me/posts/2023-04/reverse-the-fastcon-ble-protocol/
