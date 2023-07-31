@@ -11,6 +11,9 @@ Please use **hack-ble-flags.patch** to compile BlueZ from source.
 
 Credit goes to Moody https://github.com/moodyhunter/repo/blob/main/moody/bluez-ble-patched/hack-ble-flags.patch
 
+Place **bluez-brmesh.conf** in /etc/dbus-1/system.d/ and replace 1000 with uid of the user you would be running the gateway under.
+
+
 TODO: 
 * Command queueing
   
