@@ -1,0 +1,21 @@
+diff --git a/src/shared/ad.c b/src/shared/ad.c
+index 27b76dc81..0d287f750 100644
+--- a/src/shared/ad.c
++++ b/src/shared/ad.c
+@@ -535,6 +535,16 @@ uint8_t *bt_ad_generate(struct bt_ad *ad, size_t *length)
+ 	if (!adv_data)
+ 		return NULL;
+ 
++    // we firstly serialize the flags, before doing the rest of the serialization
++    struct bt_ad_data *flag_data = queue_find(ad->data, data_type_match, UINT_TO_PTR(BT_AD_FLAGS));
++    if (flag_data) {
++        adv_data[pos++] = flag_data->len + 1;
++        adv_data[pos++] = flag_data->type;
++        memcpy(adv_data + pos, flag_data->data, flag_data->len);
++        pos += flag_data->len;
++        queue_remove(ad->data, flag_data);
++    }
++
+ 	serialize_service_uuids(ad->service_uuids, adv_data, &pos);
+ 
+ 	serialize_solicit_uuids(ad->solicit_uuids, adv_data, &pos);
