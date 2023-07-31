@@ -54,3 +54,5 @@ All the above examples assume your LED light has ID 3.
 All "temperature" settings, but the most left "warm white" are ignored.
 
 For now we use shell invocation of **btmgmt** to set BLE advertising data and it really should be done in a nicer way, programmatically.
+
+Python implementation added, that uses DBus to talk to BlueZ. See **python** folder for details.
