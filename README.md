@@ -46,7 +46,7 @@ brMesh/3/set { "state": "ON", "brightness": 40 }
 To register light in HomeAssistant using MQTT, you can issue:
 
 ```
-mosquitto_pub -h MQTT_SERVER_IP -t 'homeassistant/light/brMesh3/config' -m '{ "name":"brMesh3", "schema":"json", "command_topic":"brMesh/3/set", "rgb":"true", "brightness":"true", "optimistic":"true", "effect":"false", "color_temp":"true"}'
+mosquitto_pub -h MQTT_SERVER_IP -t 'homeassistant/light/brMesh3/config' -m '{ "name":"brMesh3", "schema":"json", "command_topic":"brMesh/3/set", "rgb":"true", "brightness":"true", "optimistic":"true", "color_temp":"false", "effect":"false", "color_temp":"true", "device":{"identifiers":["brmesh2mqtt_3"], "manufacturer":"MELPO","model":"RGB light"}, "unique_id":"brmesh2mqtt_3"}'
 ```
 
 All the above examples assume your LED light has ID 3.
