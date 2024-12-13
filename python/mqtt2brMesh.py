@@ -382,6 +382,34 @@ def single_control(addr, key, data, delay):
     print('Advertisement unregistered')
     dbus.service.Object.remove_from_connection(br_advertisement)
 
+def map_range(value, from_low, from_high, to_low, to_high, transform_func=None):
+    """
+    Map a value from one range to another, with an optional non-linear transformation for the 'from' range.
+
+    :param value: The input value to be mapped.
+    :param from_low: The lower bound of the original range.
+    :param from_high: The upper bound of the original range.
+    :param to_low: The lower bound of the target range.
+    :param to_high: The upper bound of the target range.
+    :param transform_func: A function to transform the value in the 'from' range (default is linear).
+    :return: The mapped value in the target range.
+    """
+    if from_low == from_high:
+        raise ValueError("from_low and from_high cannot be the same")
+
+    if transform_func:
+        transformed_value = transform_func(value)
+        transformed_low = transform_func(from_low)
+        transformed_high = transform_func(from_high)
+    else:
+        transformed_value = value
+        transformed_low = from_low
+        transformed_high = from_high
+
+    return ((transformed_value - transformed_low) / (transformed_high - transformed_low)) * (to_high - to_low) + to_low
+
+def mireds_to_kelvins(x):
+    return 1000000 / x
 
 # Our Light class
 class Light:
@@ -457,10 +485,20 @@ def on_mqtt_message(client, userdata, msg):
                     print("color")
                     myLight.Colored(1, brightness, payload["color"]["r"], payload["color"]["g"], payload["color"]["b"], True)
                 elif "color_temp" in payload:
-                    print("color_temp")
-                    if payload["color_temp"] == 500:
-                        print("color_temp_500")
-                        myLight.WarmWhite(1, brightness, 127, 127)
+                    HA_MIN_COLOR_TEMP = 153
+                    HA_MAX_COLOR_TEMP = 500
+                    MESH_MIN_COLOR_TEMP = 0
+                    MESH_MAX_COLOR_TEMP = 255
+
+                    ha_color_temp = payload["color_temp"]
+                    mesh_color_temp = int(map_range(ha_color_temp, HA_MIN_COLOR_TEMP, HA_MAX_COLOR_TEMP, MESH_MIN_COLOR_TEMP, MESH_MAX_COLOR_TEMP, mireds_to_kelvins))
+                    is_warmer = mesh_color_temp > (MESH_MAX_COLOR_TEMP + MESH_MIN_COLOR_TEMP) / 2
+
+                    i5 = MESH_MAX_COLOR_TEMP if is_warmer else (mesh_color_temp - MESH_MIN_COLOR_TEMP) * 2 + MESH_MIN_COLOR_TEMP
+                    i6 = (MESH_MAX_COLOR_TEMP - mesh_color_temp) * 2 + MESH_MIN_COLOR_TEMP if is_warmer else MESH_MAX_COLOR_TEMP
+
+                    print("color_temp: Home Assistant {}, Mesh Warm {}, Mesh Cold {}".format(ha_color_temp, i5, i6))
+                    myLight.WarmWhite(1, brightness, i5, i6)
                 else:
                     if "state" in payload:
                         if payload["state"] == "ON":  # last state
